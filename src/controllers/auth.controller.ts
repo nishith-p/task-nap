@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 import { sendApiResponse } from '../util/response';
 import { hashPassword, matchPassword } from '../util/encryption';
 import { signToken, verifyJwt } from '../util/auth';
-import prisma from '../client';
+import prisma from '../../prisma/client';
 import logger from '../config/logger';
 import serverConfig from '../config/serverConfig';
 
