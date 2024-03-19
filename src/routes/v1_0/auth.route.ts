@@ -1,7 +1,7 @@
 import express from 'express';
 
 import * as authController from '../../controllers/auth.controller';
-import { deserializeUser } from '../../middlewares/auth';
+import * as authMiddleware from '../../middlewares/auth';
 
 const router = express.Router();
 
@@ -13,6 +13,6 @@ router.get('/logout', authController.logoutUser);
 
 router.get('/refresh-token', authController.refreshAuth);
 
-router.get('/protected', deserializeUser, authController.testProtected);
+router.get('/protected', authMiddleware.authRequired, authController.testProtected);
 
 export default router;
