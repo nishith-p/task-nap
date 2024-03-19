@@ -1,13 +1,23 @@
 import express from 'express';
 
 import * as authController from '../../controllers/auth.controller';
+import * as authValidator from '../../validators/auth.validator';
 import * as authMiddleware from '../../middlewares/auth';
+import validationMiddleware from '../../middlewares/validate';
 
 const router = express.Router();
 
-router.post('/login', authController.loginUser);
+router.post(
+  '/login',
+  validationMiddleware(authValidator.loginUserSchema),
+  authController.loginUser
+);
 
-router.post('/register', authController.createUser);
+router.post(
+  '/register',
+  validationMiddleware(authValidator.createUserSchema),
+  authController.createUser
+);
 
 router.get('/logout', authController.logoutUser);
 
