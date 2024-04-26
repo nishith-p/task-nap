@@ -8,11 +8,9 @@ import { projects, userOnProjects } from '../db/schema';
 import { sendApiResponse } from '../util/response';
 
 const getProject = async (req: Request, res: Response, next: NextFunction) => {
-  const projectExternalId = parseInt(req.params.projectId);
-
   try {
     const project = await db.query.projects.findFirst({
-      where: eq(projects.projectExternalId, projectExternalId),
+      where: eq(projects.id, +req.params.projectId),
     });
 
     if (!project) {
@@ -35,7 +33,7 @@ const getProjects = async (req: Request, res: Response, next: NextFunction) => {
       with: {
         projectCreator: {
           columns: {
-            userExternalId: true,
+            id: true,
             firstName: true,
             lastName: true,
             profilePic: true,
@@ -53,7 +51,7 @@ const getProjects = async (req: Request, res: Response, next: NextFunction) => {
 const getCreatedProjectsByUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const createdProjects = await db.query.projects.findMany({
-      where: eq(projects.projectOwnerId, req.params.userId),
+      where: eq(projects.projectOwnerId, +req.params.userId),
       columns: {
         projectDesc: false,
         projectOwnerId: false,
@@ -89,19 +87,38 @@ const updateProject = (req: Request, res: Response, next: NextFunction) => {
   res.send('Update Project');
 };
 
-const deleteProject = (req: Request, res: Response, next: NextFunction) => {
-  res.send('Delete Project');
+const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const deletedProjectObj = await db
+      .delete(projects)
+      .where(
+        and(eq(projects.id, +req.params.projectId), eq(projects.projectOwnerId, res.locals.user.id))
+      )
+      .returning();
+
+    if (deletedProjectObj.length === 0) {
+      throw createHttpError(403, 'You do not have permission or project not found');
+    }
+
+    sendApiResponse(res, 'Project deleted');
+  } catch (error) {
+    next(error);
+  }
 };
 
 const addUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!(await checkProjectOwner(req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not own this project');
+    if (+req.body.userId === res.locals.user.id) {
+      throw createHttpError(409, 'You are already assigned');
+    }
+
+    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
+      throw createHttpError(403, 'You do not have permission');
     }
 
     await db.insert(userOnProjects).values({
-      userId: req.body.userId,
-      projectId: req.params.projectId,
+      userId: parseInt(req.body.userId),
+      projectId: parseInt(req.params.projectId),
     });
 
     sendApiResponse(res, 'User added to project');
@@ -112,16 +129,16 @@ const addUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const removeUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!(await checkProjectOwner(req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not own this project');
+    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
+      throw createHttpError(403, 'You do not have permission');
     }
 
     const removedUser = await db
       .delete(userOnProjects)
       .where(
         and(
-          eq(userOnProjects.userId, req.body.userId),
-          eq(userOnProjects.projectId, req.params.projectId)
+          eq(userOnProjects.userId, +req.body.userId),
+          eq(userOnProjects.projectId, +req.params.projectId)
         )
       )
       .returning();
@@ -136,7 +153,7 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const checkProjectOwner = async (projectId: string, ownerId: string) => {
+const checkProjectOwner = async (projectId: number, ownerId: number) => {
   const isProjectCreator = await db.query.projects.findFirst({
     where: and(eq(projects.projectOwnerId, ownerId), eq(projects.id, projectId)),
   });
