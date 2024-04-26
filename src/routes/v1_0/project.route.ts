@@ -8,9 +8,9 @@ const router = express.Router();
 router.get('/', authMiddleware.authRequired, projectController.getProjects);
 router.post('/', authMiddleware.authRequired, projectController.createProject);
 
-router.get('/:projectId', projectController.getProject);
+router.get('/:projectId', authMiddleware.authRequired, projectController.getProject);
 router.patch('/:projectId', projectController.updateProject);
-router.delete('/:projectId', projectController.deleteProject);
+router.delete('/:projectId', authMiddleware.authRequired, projectController.deleteProject);
 
 router.post('/:projectId/assign', authMiddleware.authRequired, projectController.addUser);
 router.delete('/:projectId/unassign', authMiddleware.authRequired, projectController.removeUser);

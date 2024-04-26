@@ -92,7 +92,7 @@ export const userOnProjects = pgTable(
  */
 export const userRelations = relations(users, ({ many }) => ({
   projectsCreated: many(projects),
-  projectsAssigned: many(projects),
+  projectsAssigned: many(userOnProjects),
   tasksAssigned: many(tasks),
   tasksCreated: many(tasks),
 }));
@@ -102,7 +102,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
     fields: [projects.projectOwnerId],
     references: [users.id],
   }),
-  usersAssinged: many(users),
+  usersAssinged: many(userOnProjects),
   tasks: many(tasks),
 }));
 

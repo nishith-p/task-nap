@@ -9,21 +9,52 @@ import { sendApiResponse } from '../util/response';
 
 const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const project = await db.query.projects.findFirst({
+    const isProjectMember = await checkProjectMember(+req.params.projectId, res.locals.user.id);
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+
+    if (!isProjectMember && !isProjectOwner) {
+      throw createHttpError(403, 'You do not have permission');
+    }
+
+    const projectObj = await db.query.projects.findFirst({
       where: eq(projects.id, +req.params.projectId),
+      with: {
+        projectCreator: {
+          columns: {
+            firstName: true,
+            lastName: true,
+            profilePic: true,
+          },
+        },
+        usersAssinged: {
+          columns: {
+            projectId: false,
+          },
+          with: {
+            userId: {
+              columns: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                profilePic: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    if (!project) {
+    if (!projectObj) {
       throw createHttpError(400, 'Project not found');
     }
 
-    sendApiResponse(res, project);
+    sendApiResponse(res, projectObj);
   } catch (error) {
     next(error);
   }
 };
 
-const getProjects = async (req: Request, res: Response, next: NextFunction) => {
+const getProjects = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const projectsObj = await db.query.projects.findMany({
       columns: {
@@ -50,7 +81,7 @@ const getProjects = async (req: Request, res: Response, next: NextFunction) => {
 
 const getCreatedProjectsByUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const createdProjects = await db.query.projects.findMany({
+    const projectsObj = await db.query.projects.findMany({
       where: eq(projects.projectOwnerId, +req.params.userId),
       columns: {
         projectDesc: false,
@@ -58,24 +89,46 @@ const getCreatedProjectsByUser = async (req: Request, res: Response, next: NextF
       },
     });
 
-    sendApiResponse(res, createdProjects);
+    sendApiResponse(res, projectsObj);
   } catch (error) {
     next(error);
   }
 };
 
-const getAssignedProjectsByUser = (req: Request, res: Response, next: NextFunction) => {
-  res.send('Get Assigned Projects');
+const getAssignedProjectsByUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectsObj = await db.query.userOnProjects.findMany({
+      where: eq(userOnProjects.userId, +req.params.userId),
+      columns: {
+        userId: false,
+      },
+      with: {
+        projectId: {
+          columns: {
+            projectDesc: false,
+          },
+        },
+      },
+    });
+
+    sendApiResponse(res, projectsObj);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const createProject = async (req: Request, res: Response, next: NextFunction) => {
-  const newProjectObj = {
+  const projectObj = {
     projectOwnerId: res.locals.user.id,
     ...req.body,
   };
 
   try {
-    await db.insert(projects).values(newProjectObj);
+    if (res.locals.user.role !== 'MANAGER') {
+      throw createHttpError(403, 'You do not have permission');
+    }
+
+    await db.insert(projects).values(projectObj);
 
     sendApiResponse(res, 'Project created');
   } catch (error) {
@@ -89,15 +142,15 @@ const updateProject = (req: Request, res: Response, next: NextFunction) => {
 
 const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const deletedProjectObj = await db
+    const projectsObj = await db
       .delete(projects)
       .where(
         and(eq(projects.id, +req.params.projectId), eq(projects.projectOwnerId, res.locals.user.id))
       )
       .returning();
 
-    if (deletedProjectObj.length === 0) {
-      throw createHttpError(403, 'You do not have permission or project not found');
+    if (projectsObj.length === 0) {
+      throw createHttpError(403, 'Project not found or you do not have permission to delete it');
     }
 
     sendApiResponse(res, 'Project deleted');
@@ -133,7 +186,7 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
       throw createHttpError(403, 'You do not have permission');
     }
 
-    const removedUser = await db
+    const user = await db
       .delete(userOnProjects)
       .where(
         and(
@@ -143,7 +196,7 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
       )
       .returning();
 
-    if (removedUser.length === 0) {
+    if (user.length === 0) {
       throw createHttpError(400, 'User not found');
     }
 
@@ -159,6 +212,14 @@ const checkProjectOwner = async (projectId: number, ownerId: number) => {
   });
 
   return isProjectCreator;
+};
+
+const checkProjectMember = async (projectId: number, memberId: number) => {
+  const isProjectMember = await db.query.userOnProjects.findFirst({
+    where: and(eq(userOnProjects.userId, memberId), eq(userOnProjects.projectId, projectId)),
+  });
+
+  return isProjectMember;
 };
 
 export {
