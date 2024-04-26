@@ -42,6 +42,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
       user: {
         id: userObj.id,
         email: userObj.email,
+        role: userObj.role,
       },
     };
 
@@ -118,6 +119,7 @@ const refreshAuth = async (req: Request, res: Response, next: NextFunction) => {
       user: {
         id: userObj.id,
         email: userObj.email,
+        role: userObj.role,
       },
     };
 
