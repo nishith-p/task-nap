@@ -1,12 +1,12 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 import {
   pgTable,
   serial,
   text,
-  uuid,
   timestamp,
   pgEnum,
   real,
+  integer,
   primaryKey,
 } from 'drizzle-orm/pg-core';
 
@@ -20,10 +20,7 @@ export const taskPriorityEnum = pgEnum('taskPriority', ['LOW', 'MEDIUM', 'HIGH',
 
 //Tables
 export const users = pgTable('users', {
-  id: uuid('id')
-    .primaryKey()
-    .default(sql`gen_random_uuid()`),
-  userExternalId: serial('userExternalId'),
+  id: serial('id').primaryKey(),
   email: text('email').notNull(),
   password: text('password').notNull(),
   firstName: text('firstName').notNull(),
@@ -36,10 +33,9 @@ export const users = pgTable('users', {
 });
 
 export const projects = pgTable('projects', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  projectExternalId: serial('projectExternalId'),
+  id: serial('id').primaryKey(),
   projectName: text('projectName').notNull(),
-  projectOwnerId: uuid('projectOwnerId')
+  projectOwnerId: integer('projectOwnerId')
     .notNull()
     .references(() => users.id),
   projectDesc: text('projectDesc').notNull(),
@@ -50,21 +46,20 @@ export const projects = pgTable('projects', {
 });
 
 export const tasks = pgTable('tasks', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  taskExternalId: serial('taskExternalId'),
+  id: serial('id').primaryKey(),
   taskTitle: text('taskTitle').notNull(),
   taskDesc: text('taskDesc').notNull(),
   taskCategory: taskCategoryEnum('taskCategory').default('BUG'),
   taskStatus: taskStatusEnum('taskStatus').default('BACKLOG'),
-  taskCreatorId: uuid('taskCreatorId')
+  taskCreatorId: integer('taskCreatorId')
     .notNull()
     .references(() => users.id),
-  taskAssigneeId: uuid('taskAssigneeId')
+  taskAssigneeId: integer('taskAssigneeId')
     .notNull()
     .references(() => users.id),
   taskPriority: taskPriorityEnum('taskPriority').default('LOW'),
   taskEstimate: real('taskEstimate').notNull(),
-  projectId: uuid('projectId')
+  projectId: integer('projectId')
     .notNull()
     .references(() => projects.id),
   createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
@@ -74,12 +69,12 @@ export const tasks = pgTable('tasks', {
 export const userOnProjects = pgTable(
   'user_projects',
   {
-    userId: uuid('userId')
+    userId: integer('userId')
       .notNull()
       .references(() => users.id),
-    projectId: uuid('projectId')
+    projectId: integer('projectId')
       .notNull()
-      .references(() => projects.id),
+      .references(() => projects.id, { onDelete: 'cascade' }),
   },
   (table) => {
     return {

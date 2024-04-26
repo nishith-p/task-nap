@@ -35,10 +35,9 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "projects" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"projectExternalId" serial NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"projectName" text NOT NULL,
-	"projectOwnerId" uuid NOT NULL,
+	"projectOwnerId" integer NOT NULL,
 	"projectDesc" text NOT NULL,
 	"projectCategory" "projectCategory" DEFAULT 'SOFTWARE',
 	"projectStatus" "projectStatus" DEFAULT 'OPEN',
@@ -47,30 +46,28 @@ CREATE TABLE IF NOT EXISTS "projects" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tasks" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"taskExternalId" serial NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"taskTitle" text NOT NULL,
 	"taskDesc" text NOT NULL,
 	"taskCategory" "taskCategory" DEFAULT 'BUG',
 	"taskStatus" "taskStatus" DEFAULT 'BACKLOG',
-	"taskCreatorId" uuid NOT NULL,
-	"taskAssigneeId" uuid NOT NULL,
+	"taskCreatorId" integer NOT NULL,
+	"taskAssigneeId" integer NOT NULL,
 	"taskPriority" "taskPriority" DEFAULT 'LOW',
 	"taskEstimate" real NOT NULL,
-	"projectId" uuid NOT NULL,
+	"projectId" integer NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now(),
 	"updatedAt" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user_projects" (
-	"userId" uuid NOT NULL,
-	"projectId" uuid NOT NULL,
+	"userId" integer NOT NULL,
+	"projectId" integer NOT NULL,
 	CONSTRAINT "user_projects_userId_projectId_pk" PRIMARY KEY("userId","projectId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userExternalId" serial NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"password" text NOT NULL,
 	"firstName" text NOT NULL,

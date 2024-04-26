@@ -1,6 +1,6 @@
 {
-  "id": "bc4e00f7-4c06-4a68-a31c-9ecdaf540f3d",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "88ef9078-bb78-4311-9e17-a3c376a5ea62",
+  "prevId": "bc4e00f7-4c06-4a68-a31c-9ecdaf540f3d",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -249,7 +249,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
