@@ -28,7 +28,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
     );
 
     if (!validateAccessToken) {
-      throw createHttpError(403, 'Forbidden');
+      throw createHttpError(401, 'Unauthorized');
     }
 
     res.locals.user = validateAccessToken.user;
@@ -54,7 +54,7 @@ const authRequired = async (req: LoginRequest, res: Response, next: NextFunction
     req.user = res.locals.user;
 
     if (!req.user) {
-      throw createHttpError(401, 'Invalid or expired token');
+      throw createHttpError(401, 'Unauthorized');
     }
 
     next();

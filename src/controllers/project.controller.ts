@@ -13,7 +13,7 @@ const getProject = async (req: Request, res: Response, next: NextFunction) => {
     const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
 
     if (!isProjectMember && !isProjectOwner) {
-      throw createHttpError(403, 'You do not have permission');
+      throw createHttpError(403, 'You do not have permission to view this project');
     }
 
     const projectObj = await db.query.projects.findFirst({
@@ -177,12 +177,12 @@ const deleteProject = async (req: Request, res: Response, next: NextFunction) =>
 
 const addUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (+req.body.userId === res.locals.user.id) {
-      throw createHttpError(409, 'You are already assigned');
+    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
+      throw createHttpError(403, 'You do not have permission to add a user to this project');
     }
 
-    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not have permission');
+    if (+req.body.userId === res.locals.user.id) {
+      throw createHttpError(409, 'You already own this project');
     }
 
     await db.insert(userOnProjects).values({
@@ -199,7 +199,7 @@ const addUser = async (req: Request, res: Response, next: NextFunction) => {
 const removeUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not have permission');
+      throw createHttpError(403, 'You do not have permission to remove a user from this project');
     }
 
     const user = await db
