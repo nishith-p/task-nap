@@ -125,7 +125,7 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
 
   try {
     if (res.locals.user.role !== 'MANAGER') {
-      throw createHttpError(403, 'You do not have permission');
+      throw createHttpError(403, 'You do not have permission to create a project');
     }
 
     await db.insert(projects).values(projectObj);
@@ -136,8 +136,24 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-const updateProject = (req: Request, res: Response, next: NextFunction) => {
-  res.send('Update Project');
+const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectsObj = await db
+      .update(projects)
+      .set(req.body)
+      .where(
+        and(eq(projects.id, +req.params.projectId), eq(projects.projectOwnerId, res.locals.user.id))
+      )
+      .returning();
+
+    if (projectsObj.length === 0) {
+      throw createHttpError(403, 'Project not found or you do not have permission to modify it');
+    }
+
+    sendApiResponse(res, 'Project updated');
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deleteProject = async (req: Request, res: Response, next: NextFunction) => {

@@ -9,7 +9,7 @@ router.get('/', authMiddleware.authRequired, projectController.getProjects);
 router.post('/', authMiddleware.authRequired, projectController.createProject);
 
 router.get('/:projectId', authMiddleware.authRequired, projectController.getProject);
-router.patch('/:projectId', projectController.updateProject);
+router.patch('/:projectId', authMiddleware.authRequired, projectController.updateProject);
 router.delete('/:projectId', authMiddleware.authRequired, projectController.deleteProject);
 
 router.post('/:projectId/assign', authMiddleware.authRequired, projectController.addUser);
