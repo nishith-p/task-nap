@@ -54,9 +54,7 @@ export const tasks = pgTable('tasks', {
   taskCreatorId: integer('taskCreatorId')
     .notNull()
     .references(() => users.id),
-  taskAssigneeId: integer('taskAssigneeId')
-    .notNull()
-    .references(() => users.id),
+  taskAssigneeId: integer('taskAssigneeId').references(() => users.id),
   taskPriority: taskPriorityEnum('taskPriority').default('LOW'),
   taskEstimate: real('taskEstimate').notNull(),
   projectId: integer('projectId')

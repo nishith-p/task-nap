@@ -15,6 +15,13 @@
       "when": 1714145756324,
       "tag": "0001_steady_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714486101825,
+      "tag": "0002_salty_gravity",
+      "breakpoints": true
     }
   ]
 }
