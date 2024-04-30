@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Response, Request, NextFunction } from 'express';
 import { and, eq } from 'drizzle-orm';
 import createHttpError from 'http-errors';

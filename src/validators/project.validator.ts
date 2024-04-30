@@ -59,36 +59,32 @@ const updateProjectSchema = z.object({
     })
     .strict(),
   params: z.object({
-    projectId: z.number({
-      required_error: 'Project ID is required',
-      invalid_type_error: 'Project ID must be a number',
+    projectId: z.string().regex(/^\d+$/, {
+      message: 'Project ID must be a number',
     }),
   }),
 });
 
 const deleteProjectSchema = z.object({
   params: z.object({
-    projectId: z.number({
-      required_error: 'Project ID is required',
-      invalid_type_error: 'Project ID must be a number',
+    projectId: z.string().regex(/^\d+$/, {
+      message: 'Project ID must be a number',
     }),
   }),
 });
 
 const getProjectSchema = z.object({
   params: z.object({
-    projectId: z.number({
-      required_error: 'Project ID is required',
-      invalid_type_error: 'Project ID must be a number',
+    projectId: z.string().regex(/^\d+$/, {
+      message: 'Project ID must be a number',
     }),
   }),
 });
 
 const getUserProjectsSchema = z.object({
   params: z.object({
-    userId: z.number({
-      required_error: 'Project ID is required',
-      invalid_type_error: 'Project ID must be a number',
+    userId: z.string().regex(/^\d+$/, {
+      message: 'User ID must be a number',
     }),
   }),
 });
@@ -103,9 +99,8 @@ const addOrRemoveUserSchema = z.object({
     })
     .strict(),
   params: z.object({
-    projectId: z.number({
-      required_error: 'Project ID is required',
-      invalid_type_error: 'Project ID must be a number',
+    projectId: z.string().regex(/^\d+$/, {
+      message: 'Project ID must be a number',
     }),
   }),
 });
