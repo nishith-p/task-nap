@@ -35,9 +35,7 @@ export const users = pgTable('users', {
 export const projects = pgTable('projects', {
   id: serial('id').primaryKey(),
   projectName: text('projectName').notNull(),
-  projectOwnerId: integer('projectOwnerId')
-    .notNull()
-    .references(() => users.id),
+  projectOwnerId: integer('projectOwnerId').references(() => users.id, { onDelete: 'set null' }),
   projectDesc: text('projectDesc').notNull(),
   projectCategory: projectCategoryEnum('projectCategory').default('SOFTWARE'),
   projectStatus: projectStatusEnum('projectStatus').default('OPEN'),
@@ -51,15 +49,11 @@ export const tasks = pgTable('tasks', {
   taskDesc: text('taskDesc').notNull(),
   taskCategory: taskCategoryEnum('taskCategory').default('BUG'),
   taskStatus: taskStatusEnum('taskStatus').default('BACKLOG'),
-  taskCreatorId: integer('taskCreatorId')
-    .notNull()
-    .references(() => users.id),
-  taskAssigneeId: integer('taskAssigneeId').references(() => users.id),
+  taskCreatorId: integer('taskCreatorId').references(() => users.id, { onDelete: 'set null' }),
+  taskAssigneeId: integer('taskAssigneeId').references(() => users.id, { onDelete: 'set null' }),
   taskPriority: taskPriorityEnum('taskPriority').default('LOW'),
   taskEstimate: real('taskEstimate').notNull(),
-  projectId: integer('projectId')
-    .notNull()
-    .references(() => projects.id),
+  projectId: integer('projectId').references(() => projects.id, { onDelete: 'set null' }),
   createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow(),
 });
