@@ -6,11 +6,41 @@ import { db } from '../db/connect';
 import { projects, tasks, userOnProjects } from '../db/schema';
 import { sendApiResponse } from '../util/response';
 
+const getTasksForUser = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const tasksObj = await db.query.tasks.findMany({
+      where: eq(tasks.taskAssigneeId, res.locals.user.id),
+      columns: {
+        id: true,
+        taskTitle: true,
+        taskStatus: true,
+        taskCategory: true,
+        taskPriority: true,
+        taskCreatorId: true,
+        createdAt: true,
+      },
+      with: {
+        taskCreatorId: {
+          columns: {
+            profilePic: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    sendApiResponse(res, tasksObj);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getTasksForProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const isProjectMember = await checkProjectMember(+req.params.projectId, res.locals.user.id);
-    const isProjectOwner =
-      !isProjectMember && (await checkProjectOwner(+req.params.projectId, res.locals.user.id));
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
 
     if (!isProjectMember && !isProjectOwner) {
       throw createHttpError(403, 'You do not have permission to view tasks of this project');
@@ -53,9 +83,9 @@ const getTasksForProject = async (req: Request, res: Response, next: NextFunctio
 
 const getTaskDetails = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const isProjectMember = await checkProjectMember(+req.params.projectId, res.locals.user.id);
-    const isProjectOwner =
-      !isProjectMember && (await checkProjectOwner(+req.params.projectId, res.locals.user.id));
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
 
     if (!isProjectMember && !isProjectOwner) {
       throw createHttpError(403, 'You do not have permission to view details of this task');
@@ -93,31 +123,6 @@ const getTaskDetails = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-const getProjects = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const projectsObj = await db.query.projects.findMany({
-      columns: {
-        projectDesc: false,
-        projectOwnerId: false,
-      },
-      with: {
-        projectCreator: {
-          columns: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            profilePic: true,
-          },
-        },
-      },
-    });
-
-    sendApiResponse(res, projectsObj);
-  } catch (error) {
-    next(error);
-  }
-};
-
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   const taskObj = {
     taskCreatorId: res.locals.user.id,
@@ -138,21 +143,53 @@ const createTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+const updateTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const projectsObj = await db
-      .update(projects)
-      .set(req.body)
-      .where(
-        and(eq(projects.id, +req.params.projectId), eq(projects.projectOwnerId, res.locals.user.id))
-      )
-      .returning();
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
 
-    if (projectsObj.length === 0) {
-      throw createHttpError(403, 'Project not found or you do not have permission to modify it');
+    if (!isProjectMember && !isProjectOwner) {
+      throw createHttpError(403, 'You do not have permission to modify this task');
     }
 
-    sendApiResponse(res, 'Project updated');
+    const taskObj = await db
+      .update(tasks)
+      .set(req.body)
+      .where(and(eq(tasks.projectId, +req.params.projectId), eq(tasks.id, +req.params.taskId)))
+      .returning();
+
+    if (taskObj.length === 0) {
+      throw createHttpError(403, 'Task not found or you do not have permission to modify it');
+    }
+
+    sendApiResponse(res, 'Task updated');
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateTaskStatus = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
+
+    if (!isProjectMember && !isProjectOwner) {
+      throw createHttpError(403, 'You do not have permission to change status of this task');
+    }
+
+    const taskObj = await db
+      .update(tasks)
+      .set({ taskStatus: req.body.taskStatus })
+      .where(and(eq(tasks.id, +req.params.taskId), eq(tasks.projectId, +req.params.projectId)))
+      .returning();
+
+    if (taskObj.length === 0) {
+      throw createHttpError(403, 'Task not found or you do not have permission to modify it');
+    }
+
+    sendApiResponse(res, 'Task status updated');
   } catch (error) {
     next(error);
   }
@@ -175,74 +212,38 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const updateTaskStatus = async (req: Request, res: Response, next: NextFunction) => {
+const addUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const isProjectMember = await checkProjectMember(+req.params.projectId, res.locals.user.id);
-    const isProjectOwner =
-      !isProjectMember && (await checkProjectOwner(+req.params.projectId, res.locals.user.id));
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
 
     if (!isProjectMember && !isProjectOwner) {
-      throw createHttpError(403, 'You do not have permission to change status of this task');
+      throw createHttpError(403, 'You do not have permission to modify the task assignee');
+    }
+
+    if (req.body.userId !== null) {
+      const isCurrentMember = await checkProjectMember(+req.params.projectId, req.body.userId);
+
+      if (!isCurrentMember) {
+        throw createHttpError(
+          404,
+          'The user you are trying to assign is not a member of this project'
+        );
+      }
     }
 
     const taskObj = await db
       .update(tasks)
-      .set({ taskStatus: req.body.taskStatus })
+      .set({ taskAssigneeId: req.body.userId })
       .where(and(eq(tasks.id, +req.params.taskId), eq(tasks.projectId, +req.params.projectId)))
       .returning();
 
     if (taskObj.length === 0) {
-      throw createHttpError(403, 'Task not found or you do not have permission to modify it');
+      throw createHttpError(403, 'Task not found or you do not have permission to assign users');
     }
 
-    sendApiResponse(res, 'Task status updated');
-  } catch (error) {
-    next(error);
-  }
-};
-
-const addUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not have permission to add a user to this project');
-    }
-
-    if (+req.body.userId === res.locals.user.id) {
-      throw createHttpError(409, 'You already own this project');
-    }
-
-    await db.insert(userOnProjects).values({
-      userId: parseInt(req.body.userId),
-      projectId: parseInt(req.params.projectId),
-    });
-
-    sendApiResponse(res, 'User added to project');
-  } catch (error) {
-    next(error);
-  }
-};
-
-const removeUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!(await checkProjectOwner(+req.params.projectId, res.locals.user.id))) {
-      throw createHttpError(403, 'You do not have permission to remove a user from this project');
-    }
-
-    const user = await db
-      .delete(userOnProjects)
-      .where(
-        and(
-          eq(userOnProjects.userId, +req.body.userId),
-          eq(userOnProjects.projectId, +req.params.projectId)
-        )
-      )
-      .returning();
-
-    if (user.length === 0) {
-      throw createHttpError(400, 'User not found');
-    }
-
-    sendApiResponse(res, 'User removed from project');
+    sendApiResponse(res, 'User assigned to task');
   } catch (error) {
     next(error);
   }
@@ -265,13 +266,12 @@ const checkProjectMember = async (projectId: number, memberId: number) => {
 };
 
 export {
+  getTasksForUser,
   getTasksForProject,
   getTaskDetails,
-  getProjects,
   createTask,
-  updateProject,
-  deleteTask,
+  updateTask,
   updateTaskStatus,
+  deleteTask,
   addUser,
-  removeUser,
 };
