@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ALTER COLUMN "taskAssigneeId" DROP NOT NULL;

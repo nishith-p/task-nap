@@ -5,8 +5,9 @@ import logger from '../config/logger';
 
 type UserTokenObj = {
   user: {
-    id: string;
+    id: number;
     email: string;
+    role: 'MEMBER' | 'MANAGER' | 'ADMIN' | null;
   };
 };
 

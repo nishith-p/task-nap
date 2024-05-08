@@ -1,18 +1,11 @@
-import { Server } from 'http';
+import './db/connect';
 
 import app from './app';
-import prisma from './client';
 import serverConfig from './config/serverConfig';
 import logger from './config/logger';
 
-let server: Server;
-
-prisma.$connect().then(() => {
-  logger.info('Connected to SQL Database');
-
-  server = app.listen(serverConfig.port, () => {
-    logger.info(`Listening to Port: ${serverConfig.port}`);
-  });
+const server = app.listen(serverConfig.port, () => {
+  logger.info(`Listening to Port: ${serverConfig.port}`);
 });
 
 const exitHandler = () => {

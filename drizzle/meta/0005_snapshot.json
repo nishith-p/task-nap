@@ -1,0 +1,398 @@
+{
+  "id": "64f52b72-e87e-4a2b-8681-8bf0b11cd44d",
+  "prevId": "e5b3fc64-0ec9-4de2-b88f-530910dccb5b",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "projects": {
+      "name": "projects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "projectName": {
+          "name": "projectName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "projectOwnerId": {
+          "name": "projectOwnerId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "projectDesc": {
+          "name": "projectDesc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "projectCategory": {
+          "name": "projectCategory",
+          "type": "projectCategory",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'SOFTWARE'"
+        },
+        "projectStatus": {
+          "name": "projectStatus",
+          "type": "projectStatus",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'OPEN'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "projects_projectOwnerId_users_id_fk": {
+          "name": "projects_projectOwnerId_users_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "users",
+          "columnsFrom": [
+            "projectOwnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tasks": {
+      "name": "tasks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "taskTitle": {
+          "name": "taskTitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taskDesc": {
+          "name": "taskDesc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taskCategory": {
+          "name": "taskCategory",
+          "type": "taskCategory",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'BUG'"
+        },
+        "taskStatus": {
+          "name": "taskStatus",
+          "type": "taskStatus",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'BACKLOG'"
+        },
+        "taskCreatorId": {
+          "name": "taskCreatorId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "taskAssigneeId": {
+          "name": "taskAssigneeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "taskPriority": {
+          "name": "taskPriority",
+          "type": "taskPriority",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'LOW'"
+        },
+        "taskEstimate": {
+          "name": "taskEstimate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "projectId": {
+          "name": "projectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tasks_taskCreatorId_users_id_fk": {
+          "name": "tasks_taskCreatorId_users_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "users",
+          "columnsFrom": [
+            "taskCreatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "tasks_taskAssigneeId_users_id_fk": {
+          "name": "tasks_taskAssigneeId_users_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "users",
+          "columnsFrom": [
+            "taskAssigneeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "tasks_projectId_projects_id_fk": {
+          "name": "tasks_projectId_projects_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "user_projects": {
+      "name": "user_projects",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "projectId": {
+          "name": "projectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_projects_userId_users_id_fk": {
+          "name": "user_projects_userId_users_id_fk",
+          "tableFrom": "user_projects",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_projects_projectId_projects_id_fk": {
+          "name": "user_projects_projectId_projects_id_fk",
+          "tableFrom": "user_projects",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_projects_userId_projectId_pk": {
+          "name": "user_projects_userId_projectId_pk",
+          "columns": [
+            "userId",
+            "projectId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profilePic": {
+          "name": "profilePic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userRole": {
+          "name": "userRole",
+          "type": "userRole",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'MEMBER'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "projectCategory": {
+      "name": "projectCategory",
+      "values": {
+        "SOFTWARE": "SOFTWARE",
+        "MARKETING": "MARKETING",
+        "BUSINESS": "BUSINESS"
+      }
+    },
+    "projectStatus": {
+      "name": "projectStatus",
+      "values": {
+        "OPEN": "OPEN",
+        "CLOSE": "CLOSE"
+      }
+    },
+    "taskCategory": {
+      "name": "taskCategory",
+      "values": {
+        "BUG": "BUG",
+        "CR": "CR",
+        "FR": "FR"
+      }
+    },
+    "taskPriority": {
+      "name": "taskPriority",
+      "values": {
+        "LOW": "LOW",
+        "MEDIUM": "MEDIUM",
+        "HIGH": "HIGH",
+        "CRITICAL": "CRITICAL"
+      }
+    },
+    "taskStatus": {
+      "name": "taskStatus",
+      "values": {
+        "BACKLOG": "BACKLOG",
+        "SELECTED": "SELECTED",
+        "INPROGRESS": "INPROGRESS",
+        "DONE": "DONE"
+      }
+    },
+    "userRole": {
+      "name": "userRole",
+      "values": {
+        "MEMBER": "MEMBER",
+        "MANAGER": "MANAGER",
+        "ADMIN": "ADMIN"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

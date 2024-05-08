@@ -1,10 +1,12 @@
 import { Response, Request, NextFunction } from 'express';
+import { eq } from 'drizzle-orm';
 import createHttpError from 'http-errors';
 
 import { sendApiResponse } from '../util/response';
 import { hashPassword, matchPassword } from '../util/encryption';
 import { signToken, verifyJwt } from '../util/auth';
-import prisma from '../client';
+import { db } from '../db/connect';
+import { users } from '../db/schema';
 import logger from '../config/logger';
 import serverConfig from '../config/serverConfig';
 
@@ -12,17 +14,11 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, ...rest } = req.body;
 
   try {
-    if (await prisma.user.findUnique({ where: { email } })) {
+    if (await db.query.users.findFirst({ where: eq(users.email, email) })) {
       throw createHttpError(409, 'User already exists');
     }
 
-    await prisma.user.create({
-      data: {
-        email,
-        password: await hashPassword(password),
-        ...rest,
-      },
-    });
+    await db.insert(users).values({ email, password: await hashPassword(password), ...rest });
 
     sendApiResponse(res, 'User created');
   } catch (error) {
@@ -36,7 +32,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   let userObj;
 
   try {
-    userObj = await prisma.user.findUnique({ where: { email } });
+    userObj = await db.query.users.findFirst({ where: eq(users.email, email) });
 
     if (!userObj || !(await matchPassword(password, userObj.password))) {
       throw createHttpError(404, 'Email or Password is incorrect');
@@ -46,6 +42,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
       user: {
         id: userObj.id,
         email: userObj.email,
+        role: userObj.role,
       },
     };
 
@@ -55,14 +52,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
       throw createHttpError(500, 'Error occured while creating the tokens');
     }
 
-    await prisma.user.update({
-      where: {
-        id: userObj.id,
-      },
-      data: {
-        token: refreshToken,
-      },
-    });
+    await db.update(users).set({ token: refreshToken }).where(eq(users.id, userObj.id));
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -90,23 +80,14 @@ const logoutUser = async (req: Request, res: Response, next: NextFunction) => {
       throw createHttpError(204, 'No content');
     }
 
-    userObj = await prisma.user.findFirst({
-      where: { token: cookies?.refresh_token },
-    });
+    userObj = await db.query.users.findFirst({ where: eq(users.token, cookies?.refresh_token) });
 
     if (!userObj) {
       res.clearCookie('refresh_token', { httpOnly: true });
       throw createHttpError(204, 'No content');
     }
 
-    await prisma.user.update({
-      where: {
-        id: userObj.id,
-      },
-      data: {
-        token: '',
-      },
-    });
+    await db.update(users).set({ token: '' }).where(eq(users.id, userObj.id));
 
     res.clearCookie('refresh_token', { httpOnly: true }); //secure: true
 
@@ -128,9 +109,7 @@ const refreshAuth = async (req: Request, res: Response, next: NextFunction) => {
       throw createHttpError(403);
     }
 
-    const userObj = await prisma.user.findFirst({
-      where: { token: refreshToken },
-    });
+    const userObj = await db.query.users.findFirst({ where: eq(users.token, refreshToken) });
 
     if (!userObj) {
       throw createHttpError(403);
@@ -140,6 +119,7 @@ const refreshAuth = async (req: Request, res: Response, next: NextFunction) => {
       user: {
         id: userObj.id,
         email: userObj.email,
+        role: userObj.role,
       },
     };
 
