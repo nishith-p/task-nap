@@ -22,6 +22,27 @@
       "when": 1714486101825,
       "tag": "0002_salty_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1715156424642,
+      "tag": "0003_simple_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1715156642860,
+      "tag": "0004_colorful_mesmero",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1715157413876,
+      "tag": "0005_soft_hydra",
+      "breakpoints": true
     }
   ]
 }
