@@ -1,5 +1,12 @@
 {
-	"eslint.workingDirectories": [
-	  "task-nap"
-	]
-  }
+  "eslint.workingDirectories": [
+    {
+      "directory": "./client",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "./api",
+      "changeProcessCWD": true
+    }
+  ]
+}
