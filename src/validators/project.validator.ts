@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 enum projectCategory {
-  SOFTWARE,
-  MARKETING,
-  BUSINESS,
+  SOFTWARE = 'SOFTWARE',
+  MARKETING = 'MARKETING',
+  BUSINESS = 'BUSINESS',
 }
 enum projectStatus {
-  OPEN,
-  CLOSE,
+  OPEN = 'OPEN',
+  CLOSE = 'CLOSE',
 }
 
 const createProjectSchema = z.object({

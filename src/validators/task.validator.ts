@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
 enum taskCategory {
-  BUG,
-  CR,
-  FR,
+  BUG = 'BUG',
+  CR = 'CR',
+  FR = 'FR',
 }
 enum taskStatus {
-  BACKLOG,
-  SELECTED,
-  INPROGRESS,
-  DONE,
+  BACKLOG = 'BACKLOG',
+  SELECTED = 'SELECTED',
+  INPROGRESS = 'INPROGRESS',
+  DONE = 'DONE',
 }
 
 enum taskPriority {
-  LOW,
-  MEDIUM,
-  HIGH,
-  CRITICAL,
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
 }
 
 const createTaskSchema = z.object({
@@ -59,26 +59,27 @@ const updateTaskSchema = z.object({
     .object({
       taskTitle: z
         .string({
-          required_error: 'Task title is required',
           invalid_type_error: 'Task title must be a string',
         })
         .min(3, { message: 'Number of characters cannot be less than 3' })
-        .max(50, { message: 'Number of characters cannot be more than 50' }),
+        .max(50, { message: 'Number of characters cannot be more than 50' })
+        .optional(),
       taskDesc: z
         .string({
-          required_error: 'Task description is required',
           invalid_type_error: 'Task description must be a string',
         })
         .min(6, { message: 'Number of characters cannot be less than 3' })
         .max(250, {
           message: 'Number of characters cannot be more than 250',
-        }),
-      taskCategory: z.nativeEnum(taskCategory),
-      taskPriority: z.nativeEnum(taskPriority),
-      taskEstimate: z.number({
-        required_error: 'Task estimate is required',
-        invalid_type_error: 'Task estimate must be a number',
-      }),
+        })
+        .optional(),
+      taskCategory: z.nativeEnum(taskCategory).optional(),
+      taskPriority: z.nativeEnum(taskPriority).optional(),
+      taskEstimate: z
+        .number({
+          invalid_type_error: 'Task estimate must be a number',
+        })
+        .optional(),
     })
     .strict(),
   params: z.object({
@@ -143,7 +144,7 @@ const getTaskDetailsSchema = z.object({
       message: 'Project ID must be a number',
     }),
     taskId: z.string().regex(/^\d+$/, {
-      message: 'Project ID must be a number',
+      message: 'Task ID must be a number',
     }),
   }),
 });
