@@ -8,9 +8,9 @@ import { sendApiResponse } from '../util/response';
 
 const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const isProjectMember = await checkProjectMember(+req.params.projectId, res.locals.user.id);
-    const isProjectOwner =
-      !isProjectMember && (await checkProjectOwner(+req.params.projectId, res.locals.user.id));
+    const isProjectOwner = await checkProjectOwner(+req.params.projectId, res.locals.user.id);
+    const isProjectMember =
+      !isProjectOwner && (await checkProjectMember(+req.params.projectId, res.locals.user.id));
 
     if (!isProjectMember && !isProjectOwner) {
       throw createHttpError(403, 'You do not have permission to view this project');
