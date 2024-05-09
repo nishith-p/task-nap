@@ -1,10 +1,6 @@
-import { Layout } from "../components/Layout";
-import { LoginForm } from "../components/LoginForm";
+// import { Layout } from "../components/Layout";
+// import { LoginForm } from "../components/LoginForm";
 
 export const Login = () => {
-  return (
-    <Layout title="Login">
-      <LoginForm></LoginForm>
-    </Layout>
-  );
+  return <h1>Login</h1>;
 };
