@@ -17,6 +17,7 @@ const getTasksForUser = async (_req: Request, res: Response, next: NextFunction)
         taskCategory: true,
         taskPriority: true,
         taskCreatorId: true,
+        projectId: true,
         createdAt: true,
       },
       with: {
@@ -25,6 +26,13 @@ const getTasksForUser = async (_req: Request, res: Response, next: NextFunction)
             profilePic: true,
             firstName: true,
             lastName: true,
+          },
+        },
+        projectId: {
+          columns: {
+            id: true,
+            projectName: true,
+            projectCategory: true,
           },
         },
       },
