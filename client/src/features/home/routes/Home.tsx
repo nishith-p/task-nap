@@ -1,9 +1,10 @@
 import { Layout } from "../components/Layout";
+import { ProjectList } from "../components/ProjectList";
 
 export const Home = () => {
   return (
     <Layout>
-      <h1>Home!</h1>
+      <ProjectList />
     </Layout>
   );
 };
