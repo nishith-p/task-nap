@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { labels } from "./constants/data";
-import { projectSchema } from "./constants/schema";
+import { projectSchema } from "../../../shared/schemas/projectSchema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

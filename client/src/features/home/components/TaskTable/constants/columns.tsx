@@ -4,7 +4,7 @@ import { Avatar } from "@radix-ui/react-avatar";
 
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { taskCategories, taskPriorities, taskStatuses } from "./data";
-import { Task } from "./schema";
+import { Task } from "../../../../shared/schemas/taskSchema";
 
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";

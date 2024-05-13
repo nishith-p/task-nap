@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { taskCategories } from "./constants/data";
-import { taskSchema } from "./constants/schema";
+import { taskSchema } from "../../../shared/schemas/taskSchema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

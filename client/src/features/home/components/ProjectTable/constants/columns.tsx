@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { projectCategories, projectStatus } from "./data";
-import { Project } from "./schema";
+import { Project } from "../../../../shared/schemas/projectSchema";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@radix-ui/react-avatar";
