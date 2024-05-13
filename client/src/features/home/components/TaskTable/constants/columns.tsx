@@ -1,57 +1,46 @@
 import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
-
-import { projectCategories, projectStatus } from "./data";
-import { Project } from "./schema";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { Button } from "@/components/ui/button";
 import { Avatar } from "@radix-ui/react-avatar";
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export const columns: ColumnDef<Project>[] = [
+import { DataTableColumnHeader } from "../data-table-column-header";
+import { taskCategories, taskPriorities, taskStatuses } from "./data";
+import { Task } from "./schema";
+
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+export const columns: ColumnDef<Task>[] = [
   {
-    accessorKey: "projectName",
+    accessorKey: "taskTitle",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Project Name" />
+      <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => {
+      const taskCategory = taskCategories.find(
+        (taskCategory) => taskCategory.value === row.original.taskCategory
+      );
+
       return (
         <div className="flex space-x-2">
+          {taskCategory && (
+            <Badge variant="outline">{taskCategory.label}</Badge>
+          )}
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("projectName")}
+            {row.getValue("taskTitle")}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "projectCategory",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
-    ),
-    cell: ({ row }) => {
-      const category = projectCategories.find(
-        (category) => category.value === row.getValue("projectCategory")
-      );
-
-      return (
-        <div className="flex w-[100px] items-center">
-          <span>{category?.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "projectStatus",
+    accessorKey: "taskStatus",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = projectStatus.find(
-        (status) => status.value === row.getValue("projectStatus")
+      const status = taskStatuses.find(
+        (status) => status.value === row.getValue("taskStatus")
       );
 
       if (!status) {
@@ -59,7 +48,7 @@ export const columns: ColumnDef<Project>[] = [
       }
 
       return (
-        <div className="flex w-[100px] items-center">
+        <div className="flex w-[150px] items-center">
           {status.icon && (
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
@@ -72,19 +61,46 @@ export const columns: ColumnDef<Project>[] = [
     },
   },
   {
-    accessorKey: "projectCreator",
+    accessorKey: "taskPriority",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Owner" />
+      <DataTableColumnHeader column={column} title="Priority" />
+    ),
+    cell: ({ row }) => {
+      const priority = taskPriorities.find(
+        (priority) => priority.value === row.getValue("taskPriority")
+      );
+
+      if (!priority) {
+        return null;
+      }
+
+      return (
+        <div className="flex items-center">
+          {priority.icon && (
+            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )}
+          <span>{priority.label}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "taskCreatorId",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created by" />
     ),
     cell: ({ row }) => {
       const projectOwnerName =
-        row.getValue("projectCreator").firstName +
+        row.getValue("taskCreatorId").firstName +
         " " +
-        row.getValue("projectCreator").lastName;
+        row.getValue("taskCreatorId").lastName;
 
       const fallBackInitials =
-        row.getValue("projectCreator").firstName.charAt(0) +
-        row.getValue("projectCreator").lastName.charAt(0);
+        row.getValue("taskCreatorId").firstName.charAt(0) +
+        row.getValue("taskCreatorId").lastName.charAt(0);
 
       return (
         <div className="flex w-[200px] items-center">

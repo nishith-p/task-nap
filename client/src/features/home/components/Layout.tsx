@@ -16,5 +16,3 @@ export const Layout = ({ children }: LayoutProps) => {
     </div>
   );
 };
-
-//lg:grid-cols-3 xl:grid-cols-3

@@ -1,11 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 
-import { Home } from "./Home";
+import { Projects } from "./Projects";
+import { Tasks } from "./Tasks";
 
 export const HomeRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Projects />} />
+      <Route path="/tasks" element={<Tasks />} />
     </Routes>
   );
 };
