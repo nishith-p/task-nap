@@ -23,10 +23,10 @@ export function DataTableToolbar<TData>({
         <Input
           placeholder="Filter tasks..."
           value={
-            (table.getColumn("projectName")?.getFilterValue() as string) ?? ""
+            (table.getColumn("taskTitle")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("projectName")?.setFilterValue(event.target.value)
+            table.getColumn("taskTitle")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
