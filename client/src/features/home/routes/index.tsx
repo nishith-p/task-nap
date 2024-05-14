@@ -7,7 +7,7 @@ export const HomeRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Projects />} />
-      <Route path="/tasks" element={<Tasks />} />
+      <Route path="/tasks/" element={<Tasks />} />
     </Routes>
   );
 };
