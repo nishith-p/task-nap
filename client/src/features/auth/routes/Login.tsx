@@ -1,6 +1,10 @@
-// import { Layout } from "../components/Layout";
-// import { LoginForm } from "../components/LoginForm";
+import { Layout } from "../components/Layout";
+import { LoginForm } from "../components/LoginForm";
 
 export const Login = () => {
-  return <h1>Login</h1>;
+  return (
+    <Layout>
+      <LoginForm />
+    </Layout>
+  );
 };

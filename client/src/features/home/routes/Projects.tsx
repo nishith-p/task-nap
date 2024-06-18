@@ -1,9 +1,12 @@
+import { Chip } from "@mantine/core";
 import { Layout } from "../components/Layout";
 
 export const Projects = () => {
   return (
     <Layout>
-      <h1>Projects</h1>
+      <div>
+        <Chip defaultChecked>Awesome chip</Chip>
+      </div>
     </Layout>
   );
 };
