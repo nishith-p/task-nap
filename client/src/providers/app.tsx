@@ -4,7 +4,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import { queryClient } from "@/lib/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -13,10 +12,8 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <ReactQueryDevtools />
-        <Router>{children}</Router>
-      </TooltipProvider>
+      <ReactQueryDevtools />
+      <Router>{children}</Router>
     </QueryClientProvider>
   );
 };

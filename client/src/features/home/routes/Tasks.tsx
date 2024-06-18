@@ -1,10 +1,9 @@
 import { Layout } from "../components/Layout";
-import { TaskList } from "../components/TaskList";
 
 export const Tasks = () => {
   return (
     <Layout>
-      <TaskList />
+      <h1>Tasks</h1>
     </Layout>
   );
 };

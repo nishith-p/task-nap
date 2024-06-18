@@ -6,8 +6,8 @@ import { Register } from "./Register";
 export const AuthRoutes = () => {
   return (
     <Routes>
-      <Route path="register" element={<Register />} />
-      <Route path="login" element={<Login />} />
+      <Route path="sign-up" element={<Register />} />
+      <Route path="sign-in" element={<Login />} />
     </Routes>
   );
 };

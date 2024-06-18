@@ -1,10 +1,9 @@
 import { Layout } from "../components/Layout";
-import { ProjectList } from "../components/ProjectList";
 
 export const Projects = () => {
   return (
     <Layout>
-      <ProjectList />
+      <h1>Projects</h1>
     </Layout>
   );
 };
