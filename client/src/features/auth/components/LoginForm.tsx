@@ -1,16 +1,17 @@
 import { useForm } from "@mantine/form";
-import { Button, Container, Group, Stack, Text } from "@mantine/core";
+import { Button, Container, Group, Stack } from "@mantine/core";
 import { IconAt, IconLock } from "@tabler/icons-react";
 
 import { TextField, PasswordField } from "@/components/ui/Input";
 import { LinkText } from "@/components/ui/LinkText";
+import { HeaderText } from "@/components/ui/HeaderText";
 import { LoginCredentials } from "../types";
 
 export const LoginForm = () => {
   const form = useForm<LoginCredentials>({
     //validate: zodResolver(loginSchema),
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -24,11 +25,11 @@ export const LoginForm = () => {
       <Container w="50vh">
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Stack>
-            <Text fw={500}>Sign in</Text>
+            <HeaderText title="Sign in" />
             <TextField
-              placeholder="Username"
+              placeholder="Email"
               leftSection={<IconAt size="1rem" />}
-              {...form.getInputProps("username")}
+              {...form.getInputProps("email")}
             />
             <PasswordField
               placeholder="Password"
@@ -36,14 +37,14 @@ export const LoginForm = () => {
               {...form.getInputProps("password")}
             />
             <Group justify="space-between">
-              <LinkText to="/sign-up" fw={500} fz={16}>
+              <LinkText to="/auth/sign-up" fw={500} fz={16} c="absolute.2">
                 Create an account
               </LinkText>
               <Group>
-                <LinkText to="/" fw={500} fz={14}>
+                <LinkText to="/" fw={500} fz={14} c="absolute.2">
                   Reset
                 </LinkText>
-                <Button type="submit" w={80}>
+                <Button type="submit" w={80} c="absolute.4" color="dark.7">
                   Next
                 </Button>
               </Group>

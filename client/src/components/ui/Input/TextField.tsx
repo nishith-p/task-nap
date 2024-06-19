@@ -7,14 +7,14 @@ export const TextField: React.FC<TextInputProps> = ({ ...props }) => {
       {...props}
       size="md"
       styles={{
-        // input: {
-        //   borderColor: "#37394C",
-        //   backgroundColor: "#101010",
-        //   "::placeholder": { color: "#B9B9C1" },
-        // },
+        input: {
+          border: "none",
+          backgroundColor: "#313131",
+          "::placeholder": { color: "#B9B9C1" },
+        },
         label: {
-          fontSize: "16px",
-          color: "white",
+          fontSize: "14px",
+          color: "#F3F4F6",
         },
       }}
     ></TextInput>
