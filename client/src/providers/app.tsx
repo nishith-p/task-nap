@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -15,7 +15,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools />
       <MantineProvider theme={theme} defaultColorScheme="dark">
-        <Router>{children}</Router>
+        <BrowserRouter>{children}</BrowserRouter>
       </MantineProvider>
     </QueryClientProvider>
   );
