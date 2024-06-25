@@ -1,13 +1,13 @@
-type LayoutProps = {
-  children: React.ReactNode;
-  title: string;
-};
+import { Center } from "@mantine/core";
 
-export const Layout = ({ children, title }: LayoutProps) => {
+import { LayoutProps } from "@/features/shared/schemas/types";
+
+export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div>
-      <h1>{title}</h1>
-      {children}
-    </div>
+    <>
+      <Center maw={400} h="100vh" mx="auto">
+        {children}
+      </Center>
+    </>
   );
 };

@@ -1,18 +1,22 @@
-import { Headbar } from "@/components/Headbar";
-import { Sidebar } from "@/components/Sidebar";
+import { Center, Stack, Title } from "@mantine/core";
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
+import { LayoutProps } from "@/features/shared/schemas/types";
+import { Navbar } from "@/components/Navbar/Navbar";
+import { Footer } from "@/components/Footer/Footer";
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({ title, children }: LayoutProps) => {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/5">
-      <Sidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <Headbar />
-        <main className="gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">{children}</main>
-      </div>
-    </div>
+    <>
+      <Navbar />
+      <Center maw={700} mb={100} mx="auto">
+        <Stack w={700} gap={20}>
+          <Title order={2} ml="xs" ff="monospace" c="absolute.4">
+            {title}
+          </Title>
+          {children}
+        </Stack>
+      </Center>
+      <Footer />
+    </>
   );
 };

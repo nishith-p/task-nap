@@ -3,8 +3,8 @@ import { RegisterForm } from "../components/RegisterForm";
 
 export const Register = () => {
   return (
-    <Layout title="Register">
-      <RegisterForm></RegisterForm>
+    <Layout>
+      <RegisterForm />
     </Layout>
   );
 };

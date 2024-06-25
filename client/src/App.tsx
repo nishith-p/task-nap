@@ -1,3 +1,5 @@
+import "@mantine/core/styles.css";
+
 import { AppProvider } from "./providers/app";
 import { AppRoutes } from "./routes";
 

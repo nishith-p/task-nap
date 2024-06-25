@@ -1,10 +1,10 @@
+import { BrowserRouter } from "react-router-dom";
+import { MantineProvider } from "@mantine/core";
 import { QueryClientProvider } from "@tanstack/react-query";
-
-import { BrowserRouter as Router } from "react-router-dom";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { queryClient } from "@/lib/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { theme } from "@/lib/mantine-theme";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -13,10 +13,10 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <ReactQueryDevtools />
-        <Router>{children}</Router>
-      </TooltipProvider>
+      <ReactQueryDevtools />
+      <MantineProvider theme={theme} defaultColorScheme="dark">
+        <BrowserRouter>{children}</BrowserRouter>
+      </MantineProvider>
     </QueryClientProvider>
   );
 };
