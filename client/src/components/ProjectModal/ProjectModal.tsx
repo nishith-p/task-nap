@@ -3,6 +3,11 @@ import { useForm } from "@mantine/form";
 
 import { DropdownField, TextField } from "../ui/Input";
 import { ProjectDetails } from "@/features/home/types";
+import {
+  ProjectCategory,
+  ProjectStatus,
+} from "@/features/shared/schemas/types";
+import { capitalize } from "@/lib/utils";
 
 interface ProjectModalProps {
   opened: boolean;
@@ -16,10 +21,25 @@ export const ProjectModal = ({ opened, onClose, title }: ProjectModalProps) => {
     initialValues: {
       projectName: "",
       projectDesc: "",
-      projectCategory: "",
-      projectStatus: "",
+      projectCategory: ProjectCategory.Business,
+      projectStatus: ProjectStatus.Open,
     },
   });
+
+  const categoryDropDown = Object.values(ProjectCategory).map((category) => ({
+    value: category,
+    label: capitalize(category),
+  }));
+
+  const statusDropDown = Object.values(ProjectStatus).map((status) => ({
+    value: status,
+    label: capitalize(status),
+  }));
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
 
   const handleSubmit = async (values: ProjectDetails) => {
     //register(values);
@@ -29,7 +49,7 @@ export const ProjectModal = ({ opened, onClose, title }: ProjectModalProps) => {
     <>
       <Modal
         opened={opened}
-        onClose={onClose}
+        onClose={handleClose}
         title={title}
         closeOnClickOutside={false}
         yOffset="20vh"
@@ -39,7 +59,7 @@ export const ProjectModal = ({ opened, onClose, title }: ProjectModalProps) => {
             <DropdownField
               label="Type"
               variant="modal"
-              data={["Business", "Marketing", "Software"]}
+              data={categoryDropDown}
               {...form.getInputProps("projectCategory")}
             />
             <TextField
@@ -53,12 +73,12 @@ export const ProjectModal = ({ opened, onClose, title }: ProjectModalProps) => {
               {...form.getInputProps("projectDesc")}
             />
             <Text mt="-10px" mb="-5px" size="xs" c="dimmed">
-              Concisely summarize the issue in one or two sentences.
+              Concisely summarize the project in one or two sentences.
             </Text>
             <DropdownField
               label="Status"
               variant="modal"
-              data={["Open", "Close"]}
+              data={statusDropDown}
               {...form.getInputProps("projectStatus")}
             />
             <Group mt="xs" justify="right">

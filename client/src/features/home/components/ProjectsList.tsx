@@ -1,6 +1,9 @@
 import { Table } from "@mantine/core";
 
+import { LinkText } from "@/components/ui/LinkText";
+
 type ProjectElement = {
+  id: number;
   title: string;
   owner: string;
 };
@@ -11,8 +14,16 @@ type ProjectListProps = {
 
 export const ProjectsList = ({ elements }: ProjectListProps) => {
   const rows = elements.map((element) => (
-    <Table.Tr key={element.title}>
-      <Table.Td fz={14}>{element.title}</Table.Td>
+    <Table.Tr key={element.id}>
+      <Table.Td>
+        <LinkText
+          to={`/projects/${element.id.toString()}`}
+          c="absolute.4"
+          fz={14}
+        >
+          {element.title}
+        </LinkText>
+      </Table.Td>
       <Table.Td fz={14} c="absolute.2" ta="right">
         {element.owner}
       </Table.Td>
