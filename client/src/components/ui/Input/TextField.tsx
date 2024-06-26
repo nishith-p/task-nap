@@ -1,22 +1,29 @@
 import { TextInput, TextInputProps } from "@mantine/core";
-import React from "react";
 
-export const TextField: React.FC<TextInputProps> = ({ ...props }) => {
+type CustomTextInputProps = {
+  variant?: string;
+} & TextInputProps;
+
+const getStyles = (variant: string | undefined) => ({
+  input: {
+    fontSize: variant === "modal" ? "13px" : "14px",
+    backgroundColor: "#313131",
+    border: "none",
+    "::placeholder": { color: "#B9B9C1" },
+  },
+  label: {
+    fontSize: variant === "modal" ? "12px" : "14px",
+    color: "#F3F4F6",
+    ...(variant === "modal" && { marginBottom: "5px" }),
+  },
+});
+
+export const TextField = ({ variant, ...props }: CustomTextInputProps) => {
   return (
     <TextInput
       {...props}
-      size="md"
-      styles={{
-        input: {
-          border: "none",
-          backgroundColor: "#313131",
-          "::placeholder": { color: "#B9B9C1" },
-        },
-        label: {
-          fontSize: "14px",
-          color: "#F3F4F6",
-        },
-      }}
+      size={variant === "modal" ? "sm" : "md"}
+      styles={getStyles(variant)}
     ></TextInput>
   );
 };

@@ -1,31 +1,31 @@
-import { PasswordInput, PasswordInputProps } from "@mantine/core";
+import { NativeSelect, NativeSelectProps } from "@mantine/core";
 
-type CustomPasswordInputProps = {
+type CustomNativeSelectProps = {
   variant?: string;
-} & PasswordInputProps;
+} & NativeSelectProps;
 
 const getStyles = (variant: string | undefined) => ({
   input: {
+    fontSize: variant === "modal" ? "13px" : "14px",
     backgroundColor: "#313131",
     border: "none",
-    "::placeholder": { color: "#B9B9C1" },
   },
   label: {
     fontSize: variant === "modal" ? "12px" : "14px",
-    color: "#F3F4F6",
+    color: "white",
     ...(variant === "modal" && { marginBottom: "5px" }),
   },
 });
 
-export const PasswordField = ({
+export const DropdownField = ({
   variant,
   ...props
-}: CustomPasswordInputProps) => {
+}: CustomNativeSelectProps) => {
   return (
-    <PasswordInput
+    <NativeSelect
       {...props}
       size={variant === "modal" ? "sm" : "md"}
       styles={getStyles(variant)}
-    ></PasswordInput>
+    ></NativeSelect>
   );
 };
