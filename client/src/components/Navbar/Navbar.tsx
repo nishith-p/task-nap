@@ -11,9 +11,9 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconNote, IconLogout, IconSettings } from "@tabler/icons-react";
+import { NavLink } from "react-router-dom";
 
 import classes from "./Navbar.module.css";
-import { NavLink } from "react-router-dom";
 
 const links = [
   { link: "/home", label: "Projects" },

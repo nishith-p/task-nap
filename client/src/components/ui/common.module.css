@@ -1,0 +1,9 @@
+.addIcon {
+	padding: rem(6px) rem(6px);
+	border-radius: var(--mantine-radius-sm);
+	text-decoration: none;
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-2));
+	@mixin hover {
+	  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	}
+}
