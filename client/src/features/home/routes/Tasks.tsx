@@ -1,3 +1,4 @@
+import { BaseLayout } from "@/features/shared/BaseLayout";
 import { Layout } from "../components/Layout";
 import { TasksList } from "../components/TasksList";
 
@@ -94,8 +95,10 @@ export const Tasks = () => {
   ];
 
   return (
-    <Layout title="Tasks">
-      <TasksList elements={elements} />
-    </Layout>
+    <BaseLayout>
+      <Layout title="Tasks">
+        <TasksList elements={elements} />
+      </Layout>
+    </BaseLayout>
   );
 };

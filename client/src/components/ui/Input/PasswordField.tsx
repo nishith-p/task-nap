@@ -6,6 +6,7 @@ type CustomPasswordInputProps = {
 
 const getStyles = (variant: string | undefined) => ({
   input: {
+    fontSize: variant === "modal" ? "13px" : "14px",
     backgroundColor: "#313131",
     border: "none",
     "::placeholder": { color: "#B9B9C1" },
