@@ -4,8 +4,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconCirclePlus } from "@tabler/icons-react";
 
 import { LayoutProps } from "@/features/shared/schemas/types";
-import { Navbar } from "@/components/Navbar/Navbar";
-import { Footer } from "@/components/Footer/Footer";
 import { ProjectModal } from "@/components/ProjectModal/ProjectModal";
 
 import classes from "@/components/ui/common.module.css";
@@ -16,7 +14,6 @@ export const Layout = ({ title, children }: LayoutProps) => {
 
   return (
     <>
-      <Navbar />
       <Center maw={700} mb={100} mx="auto">
         <Stack w={700} gap={20}>
           <Group justify="space-between">
@@ -41,7 +38,6 @@ export const Layout = ({ title, children }: LayoutProps) => {
           {children}
         </Stack>
       </Center>
-      <Footer />
     </>
   );
 };
